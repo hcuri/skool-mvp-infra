@@ -4,5 +4,15 @@ Terraform repo for AWS foundations: VPC (public/private subnets, NAT/IGW, routin
 
 ## Status
 
-- Planning/scaffolding; no Terraform code checked in yet.
-- Next: lay down provider wiring and module skeletons, then `environments/dev` stack.
+- Scaffolding in place: provider/versions at repo root, modules for VPC/EKS/RDS, and `environments/dev` wiring them together.
+- Next: run `terraform init` / `terraform plan` and review costs/config before any apply.
+
+## Usage (dev)
+
+```bash
+cd environments/dev
+terraform init
+terraform plan
+```
+
+> Do **not** run `terraform apply` until costs/credentials/region are confirmed. This will provision real AWS resources (EKS, RDS, NAT).
