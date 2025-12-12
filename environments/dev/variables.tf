@@ -4,6 +4,12 @@ variable "aws_region" {
   default     = "us-west-2"
 }
 
+variable "aws_profile" {
+  description = "AWS CLI/SDK profile to use for credentials"
+  type        = string
+  default     = "skool"
+}
+
 variable "vpc_cidr" {
   description = "CIDR block for the VPC"
   type        = string

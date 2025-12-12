@@ -4,8 +4,15 @@ variable "aws_region" {
   default     = "us-west-2"
 }
 
+variable "aws_profile" {
+  description = "AWS CLI/SDK profile to use for credentials"
+  type        = string
+  default     = "skool"
+}
+
 provider "aws" {
-  region = var.aws_region
+  region  = var.aws_region
+  profile = var.aws_profile
 }
 
 data "aws_caller_identity" "current" {}
