@@ -1,28 +1,35 @@
 # Skool MVP Infra
 
-Terraform repo for AWS foundations: VPC (public/private subnets, NAT/IGW, routing), EKS (cluster + managed node groups), and RDS Postgres in private subnets. Uses environment stacks (starting with `environments/dev`) and reusable modules (`modules/vpc`, `modules/eks`, `modules/rds`).
+Built by **Hector Curi** as a personal project to demonstrate end-to-end DevOps/SRE skills (Terraform, AWS, Kubernetes, GitOps).
 
-## Status
+Terraform configuration that provisions AWS VPC, networking (public/private subnets, IGW, NAT), EKS cluster, and RDS Postgres for the Skool MVP app.
 
-- Deployed: `environments/dev` applied (VPC + EKS + RDS). Costs reviewed and acceptable for dev.
-- Modules: VPC (public/private across 2 AZs + NAT), EKS (cluster + managed node group + IAM), RDS (Postgres, private subnets, SG restricted to EKS).
-- Credentials: AWS profile `skool`, region `us-west-2` by default.
-- State: local (no remote backend configured).
-- DB password: provided via tfvars (not in repo).
+## Architecture / Project structure
+- `modules/vpc` – VPC, public/private subnets across 2 AZs, IGW, NAT, route tables.
+- `modules/eks` – EKS control plane, managed node group, IAM roles.
+- `modules/rds` – RDS Postgres in private subnets, security group restricted to EKS.
+- `environments/dev` – Wires modules together with region/profile/DB settings for dev.
 
-## Usage (dev)
+## How it fits into the Skool MVP
+- This repo stands up the AWS environment (VPC, EKS, RDS) used by the Skool MVP API.
+- App code + Helm chart live in `skool-mvp-app` (API backend).
+- GitOps/ArgoCD config lives in `skool-mvp-gitops`.
 
+## Usage (dev, high level)
 ```bash
 cd environments/dev
-terraform init
-terraform plan
-terraform apply
+AWS_PROFILE=skool terraform init
+AWS_PROFILE=skool terraform plan
+AWS_PROFILE=skool terraform apply
 ```
+- Region defaults to `us-west-2` via `aws_region` variable.
+- Credentials via AWS CLI/profile (`aws login --profile signin` then `AWS_PROFILE=skool`), not hard-coded keys.
 
-> Note: This provisions real AWS resources (EKS, NAT, RDS). Keep an eye on ongoing costs and tear down when not needed.
+## Security / secrets
+- DB passwords and other sensitive values are passed via `terraform.tfvars` or `TF_VAR_db_password`; they are not committed.
+- For production-grade setups, store DB creds in AWS Secrets Manager and surface them to apps via an operator/External Secrets.
+- State is local by default; add S3+Dynamo remote state for team use.
 
-## Notes
-- Provider config uses `aws_region` (default `us-west-2`) and `aws_profile` (default `skool`).
-- RDS password must be supplied via `terraform.tfvars` (gitignored).
-- No remote backend; add S3+Dynamo for team use if needed.
-- Cluster access: `aws eks update-kubeconfig --name skool-mvp-dev-eks --region us-west-2 --profile skool`.
+## License & attribution
+- Licensed under the MIT License (see `LICENSE`).
+- You are welcome to copy/adapt the code. If you reuse it, please preserve the original copyright and license notices so attribution to the author, Hector Curi, is retained.
