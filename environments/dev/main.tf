@@ -32,10 +32,10 @@ module "eks" {
   source              = "../../modules/eks"
   cluster_name        = "${local.project_name}-eks"
   private_subnet_ids  = module.vpc.private_subnet_ids
-  desired_capacity    = 2
+  desired_capacity    = 3
   min_size            = 1
-  max_size            = 3
-  node_instance_type  = "t3.small"
+  max_size            = 4
+  node_instance_type  = "t3.medium"
   tags                = local.tags
 }
 
