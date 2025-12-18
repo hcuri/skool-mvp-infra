@@ -22,3 +22,13 @@ output "node_group_role_arn" {
   description = "IAM role ARN used by the managed node group"
   value       = aws_iam_role.node.arn
 }
+
+output "oidc_provider_arn" {
+  description = "IAM OIDC provider ARN for IRSA"
+  value       = aws_iam_openid_connect_provider.this.arn
+}
+
+output "oidc_issuer_url" {
+  description = "OIDC issuer URL for IRSA"
+  value       = aws_eks_cluster.this.identity[0].oidc[0].issuer
+}

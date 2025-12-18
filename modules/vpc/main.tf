@@ -4,6 +4,9 @@ data "aws_availability_zones" "available" {
 
 locals {
   azs = slice(data.aws_availability_zones.available.names, 0, var.az_count)
+  cluster_tags = var.cluster_name != "" ? {
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+  } : {}
 }
 
 resource "aws_vpc" "this" {
@@ -32,7 +35,8 @@ resource "aws_subnet" "public" {
   availability_zone       = local.azs[count.index]
   map_public_ip_on_launch = true
 
-  tags = merge(var.tags, {
+  tags = merge(var.tags, local.cluster_tags, {
+    "kubernetes.io/role/elb" = "1"
     Name = "skool-mvp-public-${local.azs[count.index]}"
   })
 }
@@ -44,7 +48,8 @@ resource "aws_subnet" "private" {
   cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index + 10)
   availability_zone = local.azs[count.index]
 
-  tags = merge(var.tags, {
+  tags = merge(var.tags, local.cluster_tags, {
+    "kubernetes.io/role/internal-elb" = "1"
     Name = "skool-mvp-private-${local.azs[count.index]}"
   })
 }

@@ -10,6 +10,12 @@ variable "az_count" {
   default     = 2
 }
 
+variable "cluster_name" {
+  description = "EKS cluster name used for Kubernetes subnet tags (required for AWS Load Balancer Controller)"
+  type        = string
+  default     = ""
+}
+
 variable "tags" {
   description = "Common tags to apply to resources"
   type        = map(string)

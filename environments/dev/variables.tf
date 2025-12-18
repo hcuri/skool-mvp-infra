@@ -32,3 +32,9 @@ variable "db_password" {
   description = "Database password"
   type        = string
 }
+
+variable "domain_name" {
+  description = "Root DNS name for the demo (hosted zone + ACM certificate)"
+  type        = string
+  default     = "skoo1.com"
+}
